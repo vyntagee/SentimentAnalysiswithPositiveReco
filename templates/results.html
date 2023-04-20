@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Results</title>
+  <link rel="stylesheet" href="static/css/style.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+  <h1>Tweet Analysis Results</h1>
+  
+  <div class="filter">
+    <label for="sentimentFilter">Sentiment:</label>
+    <select id="sentimentFilter">
+      <option value="">All</option>
+      <option value="negative">Negative</option>
+      <option value="neutral">Neutral</option>
+      <option value="positive">Positive</option>
+    </select>
+    <label for="categoryFilter">Category:</label>
+    <select id="categoryFilter">
+      <option value="">All</option>
+      <option value="general">General</option>
+      <option value="LearningPlatform">LearningPlatform</option>
+      <option value="cashier">Cashier</option>
+      <option value="registrar">Registrar</option>
+    </select>
+  </div>
+  <div class="table-wrapper">
+        <table id="resultsTable">
+            <tr>
+            <th>User</th>
+            <th>Date</th>
+            <th>Text</th>
+            <th>Sentiment</th>
+            <th>Category</th>
+            <th>Recommendation</th>
+            </tr>
+            {% for result in results %}
+            <tr>
+                <td>{{ result.user_name }}</td>
+                <td>{{ result.date }}</td>
+                <td>{{ result.text }}</td>
+                <td>{{ result.sentiment }}</td>
+                <td>{{ result.category }}</td>
+                <td>{{ result.recommendation }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+  <script>
+    function filterTable() {
+      var inputSentiment = document.getElementById("sentimentFilter");
+      var inputCategory = document.getElementById("categoryFilter");
+      var table = document.getElementById("resultsTable");
+      var rows = table.getElementsByTagName("tr");
+      
+      for (var i = 1; i < rows.length; i++) {
+        var sentimentCell = rows[i].getElementsByTagName("TD")[3];
+        var categoryCell = rows[i].getElementsByTagName("TD")[4];
+        var sentimentMatch = (inputSentiment.value === "" || inputSentiment.value === sentimentCell.innerHTML);
+        var categoryMatch = (inputCategory.value === "" || inputCategory.value === categoryCell.innerHTML);
+        if (sentimentMatch && categoryMatch) {
+          rows[i].style.display = "";
+        } else {
+          rows[i].style.display = "none";
+        }
+      }
+    }
+
+    document.getElementById("sentimentFilter").addEventListener("change", filterTable);
+    document.getElementById("categoryFilter").addEventListener("change", filterTable);
+  </script>
+</body>
+
+<div class="container mt-5">
+    <div class="row">
+      <div class="col-md-6">
+        {{ category_pie_chart | safe }}
+      </div>
+      <div class="col-md-6">
+        {{ sentiment_pie_chart | safe }}
+      </div>
+    </div>
+  </div>
+</html>
